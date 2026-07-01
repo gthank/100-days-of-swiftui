@@ -13,10 +13,14 @@ struct ContentView: View {
 
     @State private var numPeople = 2
     @State private var checkAmount: Double = 0
+    @FocusState private var amountIsFocused: Bool
     @State private var tipPercentage = 18
 
+    // It's a trailing closure, dummy. Quit trying to put an equal sign in
+    // there. That is grug brain.
     var totalPerPerson: Double {
-        let correctedNumPeople = Double(numPeople + 2) // Because our range control is STUPID
+        // Because our range control is STUPID.
+        let correctedNumPeople = Double(numPeople + 2)
         let tipMultiplier = 1.0 + Double(tipPercentage) / 100.0
         return (checkAmount * tipMultiplier) / correctedNumPeople
     }
@@ -25,10 +29,18 @@ struct ContentView: View {
         NavigationStack {
             Form {
                 Section {
-                    TextField("Amount", value: $checkAmount, format: .currency(code: currencyIdentifier)).keyboardType(.decimalPad)
+                    TextField(
+                        "Amount",
+                        value: $checkAmount,
+                        format: .currency(code: currencyIdentifier)
+                    ).keyboardType(.decimalPad)
+                        .focused($amountIsFocused)
                 }
                 Section {
-                    Picker("Number of People in Your Party", selection: $numPeople) {
+                    Picker(
+                        "Number of People in Your Party",
+                        selection: $numPeople
+                    ) {
                         ForEach(2..<100) {
                             Text("\($0) people")
                         }
@@ -41,12 +53,24 @@ struct ContentView: View {
                         }
                     }.pickerStyle(.segmented)
                 }
-
-            }.navigationTitle("WeSplit \(Image(systemName: "arrow.trianglehead.branch"))")
-        }
-        Section {
-            Text("Your Fair Share")
-            Text(totalPerPerson, format: .currency(code: currencyIdentifier))
+            }
+            Section {
+                Text("Your Fair Share")
+                Text(totalPerPerson, format: .currency(code: currencyIdentifier))
+            }.navigationBarTitleDisplayMode(.inline) // Requires inline mode
+                .toolbar {
+                    if amountIsFocused {
+                        Button("Done") {
+                            amountIsFocused = false
+                        }
+                    }
+                    //                    ToolbarItem(placement: .principal) {
+                    //                        HStack {
+                    //                            Text("WeSplit").font(.headline)
+                    //                            Image(systemName: "arrow.trianglehead.branch").foregroundColor(.gray)
+                    //                        }
+                    //                    }
+                }
         }
     }
 }
