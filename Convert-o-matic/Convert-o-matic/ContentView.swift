@@ -8,29 +8,14 @@
 import SwiftUI
 
 struct ContentView: View {
-    private let allowedTempUnits: [UnitTemperature] = [.celsius, .fahrenheit, .kelvin]
+    private let allowedTempUnits: [Dimension] = [UnitTemperature.celsius, UnitTemperature.fahrenheit, UnitTemperature.kelvin]
 
-    enum TempUnit : String, CaseIterable, Identifiable {
-        case celsius = "Celsius"
-        case fahrenheit = "Fahrenheit"
-        case kelvin = "Kelvin"
-
-        var id: String { self.rawValue }
-
-        var unit: UnitTemperature {
-            switch self {
-            case .celsius: return .celsius
-            case .fahrenheit: return .fahrenheit
-            case .kelvin: return .kelvin
-            }
-        }
-    }
-
-    @State private var tempInput = Measurement(value: 23, unit: UnitTemperature.celsius)
-    @State private var tempInputUnit = UnitTemperature.celsius
-    @State private var tempOutputUnit = UnitTemperature.fahrenheit
-    private var tempOutput: Measurement<UnitTemperature> {
-        return tempInput.converted(to: tempOutputUnit)
+    @State private var tempInput: Double = 0
+    @State private var tempInputUnit: Dimension = UnitTemperature.celsius
+    @State private var tempOutputUnit: Dimension = UnitTemperature.fahrenheit
+    private var tempOutput: Measurement<Dimension> {
+        let inputAsMeasurement = Measurement(value: tempInput, unit: tempInputUnit)
+        return inputAsMeasurement.converted(to: tempOutputUnit)
     }
 
     var body: some View {
@@ -38,7 +23,7 @@ struct ContentView: View {
             Form {
                 Section(header: Text("Temperature \(Image(systemName: "thermometer.variable"))")) {
                     HStack {
-                        TextField("Input", value: $tempInput.value, format: .number).keyboardType(.decimalPad)
+                        TextField("Input", value: $tempInput, format: .number).keyboardType(.decimalPad)
                         Spacer()
                         Text("\(tempOutput.formatted())")
                     }
