@@ -23,20 +23,25 @@ struct ContentView: View {
             Form {
                 Section(header: Text("Temperature \(Image(systemName: "thermometer.variable"))")) {
                     HStack {
-                        TextField("Input", value: $tempInput, format: .number).keyboardType(.decimalPad)
+                        TextField("Input", value: $tempInput, format: .number).keyboardType(.decimalPad).frame(maxWidth: .infinity)
+
                         Spacer()
-                        Text("\(tempOutput.formatted())")
+                        Picker("Input Unit", selection: $tempInputUnit) {
+                            ForEach(allowedTempUnits, id: \.self) { unit in
+                                Text(unit.symbol).tag(unit)
+                            }
+                        }.pickerStyle(.menu).frame(maxWidth: .infinity)
+
                     }
-                    Picker("Input Unit", selection: $tempInputUnit) {
-                        ForEach(allowedTempUnits, id: \.self) { unit in
-                            Text(unit.symbol).tag(unit)
-                        }
-                    }.pickerStyle(.segmented)
-                    Picker("Output Unit", selection: $tempOutputUnit) {
-                        ForEach(allowedTempUnits, id: \.self) { unit in
-                            Text(unit.symbol).tag(unit)
-                        }
-                    }.pickerStyle(.segmented)
+                    HStack {
+                        Text("\(tempOutput.formatted())").padding(0).frame(maxWidth: .infinity)
+                        Spacer()
+                        Picker("Output Unit", selection: $tempOutputUnit) {
+                            ForEach(allowedTempUnits, id: \.self) { unit in
+                                Text(unit.symbol).tag(unit)
+                            }
+                        }.pickerStyle(.menu).frame(maxWidth: .infinity)
+                    }
                 }
 
                 Section(header: Text("Length \(Image(systemName: "lines.measurement.horizontal.aligned.bottom"))")) {
