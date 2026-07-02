@@ -8,34 +8,29 @@
 import SwiftUI
 
 struct ContentView: View {
-    enum UnitOfLength {
-        case Meters
-        case Kilometers
-        case Feet
-        case Yards
-        case Miles
-    }
-    enum UnitOfTime {
-        case Seconds
-        case Minutes
-        case Hours
-        case Days
-    }
-    enum UnitOfVolume {
-        case Mililiters
-        case Liters
-        case Cups
-        case Pints
-        case Quarts
-        case Gallons
+    private let allowedTempUnits: [UnitTemperature] = [.celsius, .fahrenheit, .kelvin]
+
+    enum TempUnit : String, CaseIterable, Identifiable {
+        case celsius = "Celsius"
+        case fahrenheit = "Fahrenheit"
+        case kelvin = "Kelvin"
+
+        var id: String { self.rawValue }
+
+        var unit: UnitTemperature {
+            switch self {
+            case .celsius: return .celsius
+            case .fahrenheit: return .fahrenheit
+            case .kelvin: return .kelvin
+            }
+        }
     }
 
-    @State private var tempInput : Double = 0
+    @State private var tempInput = Measurement(value: 23, unit: UnitTemperature.celsius)
     @State private var tempInputUnit = UnitTemperature.celsius
     @State private var tempOutputUnit = UnitTemperature.fahrenheit
     private var tempOutput: Measurement<UnitTemperature> {
-        let tempAsMeasurement = Measurement(value: tempInput, unit: tempInputUnit)
-        return tempAsMeasurement.converted(to: tempOutputUnit)
+        return tempInput.converted(to: tempOutputUnit)
     }
 
     var body: some View {
@@ -43,17 +38,30 @@ struct ContentView: View {
             Form {
                 Section(header: Text("Temperature \(Image(systemName: "thermometer.variable"))")) {
                     HStack {
-                        TextField("Input", value: $tempInput, format: .number).keyboardType(.numberPad)
+                        TextField("Input", value: $tempInput.value, format: .number).keyboardType(.decimalPad)
                         Spacer()
                         Text("\(tempOutput.formatted())")
                     }
+                    Picker("Input Unit", selection: $tempInputUnit) {
+                        ForEach(allowedTempUnits, id: \.self) { unit in
+                            Text(unit.symbol).tag(unit)
+                        }
+                    }.pickerStyle(.segmented)
+                    Picker("Output Unit", selection: $tempOutputUnit) {
+                        ForEach(allowedTempUnits, id: \.self) { unit in
+                            Text(unit.symbol).tag(unit)
+                        }
+                    }.pickerStyle(.segmented)
                 }
+
                 Section(header: Text("Length \(Image(systemName: "lines.measurement.horizontal.aligned.bottom"))")) {
 
                 }
+
                 Section(header: Text("Time \(Image(systemName: "clock"))")) {
 
                 }
+
                 Section(header: Text("Volume \(Image(systemName: "flask"))")) {
 
                 }
