@@ -30,55 +30,12 @@ struct ContentView: View {
         case Gallons
     }
 
-    private func wrapOutputTemp(_ tempToWrap: Double) -> Measurement<UnitTemperature> {
-        return Measurement(value: tempToWrap, unit: tempOutputUnit)
-    }
-
     @State private var tempInput : Double = 0
     @State private var tempInputUnit = UnitTemperature.celsius
     @State private var tempOutputUnit = UnitTemperature.fahrenheit
     private var tempOutput: Measurement<UnitTemperature> {
-        switch tempInputUnit {
-        case .fahrenheit:
-            switch tempOutputUnit {
-            case .fahrenheit:
-                return wrapOutputTemp(tempInput)
-            case .celsius:
-                return wrapOutputTemp((tempInput - 32) / 1.8)
-            case .kelvin:
-                return wrapOutputTemp((tempInput - 32) / 1.8 + 273.15)
-            default:
-                // I should really probably do some sort of error, here
-                return wrapOutputTemp(tempInput)
-            }
-        case .celsius:
-            switch tempOutputUnit {
-            case .fahrenheit:
-                return wrapOutputTemp(tempInput * 1.8 + 32)
-            case .celsius:
-                return wrapOutputTemp(tempInput)
-            case .kelvin:
-                return wrapOutputTemp(tempInput + 273.15)
-            default:
-                // I should really probably do some sort of error, here
-                return wrapOutputTemp(tempInput)
-            }
-        case .kelvin:
-            switch tempOutputUnit {
-            case .fahrenheit:
-                return wrapOutputTemp((tempInput - 273.15) * 1.8 + 32)
-            case .celsius:
-                return wrapOutputTemp(tempInput - 273.15)
-            case .kelvin:
-                return wrapOutputTemp(tempInput)
-            default:
-                // I should really probably do some sort of error, here
-                return wrapOutputTemp(tempInput)
-            }
-        default:
-            // I should really probably do some sort of error, here
-            return wrapOutputTemp(tempInput)
-        }
+        let tempAsMeasurement = Measurement(value: tempInput, unit: tempInputUnit)
+        return tempAsMeasurement.converted(to: tempOutputUnit)
     }
 
     var body: some View {
