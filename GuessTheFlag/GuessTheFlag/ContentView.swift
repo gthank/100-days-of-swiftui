@@ -40,7 +40,7 @@ struct ContentView: View {
                     Button {
                         flagTapped(number)
                     } label: {
-                        Image(countries[number].lowercased())
+                        Image(countries[number].lowercased()).clipShape(.capsule).shadow(radius: 5)
                     }
                 }
             }
