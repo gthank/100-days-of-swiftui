@@ -24,7 +24,7 @@ struct ContentView: View {
             scoreTitle = "Correct-a-mundo, buuuuu-ddy!"
             score += 200
         } else {
-            scoreTitle = "BZZZT! Wrong!"
+            scoreTitle = "BZZZT! Wrong! That's the flag of \(countries[number])"
             score -= 100
         }
         showingScore = true
