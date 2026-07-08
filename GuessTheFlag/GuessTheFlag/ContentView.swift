@@ -22,8 +22,10 @@ struct ContentView: View {
     func flagTapped(_ number: Int) {
         if number == correctAnswer {
             scoreTitle = "Correct-a-mundo, buuuuu-ddy!"
+            score += 200
         } else {
             scoreTitle = "BZZZT! Wrong!"
+            score -= 100
         }
         showingScore = true
     }
@@ -55,7 +57,7 @@ struct ContentView: View {
                 }
                 Spacer()
                 Spacer()
-                Text("Score: ???")
+                Text("Score: \(score)")
                     .foregroundStyle(.white)
                     .font(.title.bold())
                 Spacer()
@@ -69,7 +71,7 @@ struct ContentView: View {
         .alert(scoreTitle, isPresented: $showingScore) {
             Button("Continue", action: askQuestion)
         } message: {
-            Text("Your score is ???")
+            Text("Your score is \(score)")
         }
     }
 }
