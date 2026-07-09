@@ -7,6 +7,9 @@
 
 import SwiftUI
 
+let charcoal = Color(red: 0.4, green: 0.4, blue: 0.4)
+let smokestreak = Color(red: 0.96, green: 0.96, blue: 0.96)
+
 struct Title: ViewModifier {
     func body(content: Content) -> some View {
         content
@@ -15,12 +18,6 @@ struct Title: ViewModifier {
             .padding()
             .background(.blue)
             .clipShape(.rect(cornerRadius: 10))
-    }
-}
-
-extension View {
-    func titleStyle() -> some View {
-        modifier(Title())
     }
 }
 
@@ -36,6 +33,30 @@ struct CapsuleText: View {
     }
 }
 
+struct Watermark: ViewModifier {
+    var text: String
+
+    func body(content: Content) -> some View {
+        ZStack(alignment: .bottomTrailing) {
+            content
+            Text(text)
+                .font(.caption)
+                .foregroundStyle(charcoal)
+                .padding(5)
+        }
+    }
+}
+
+extension View {
+    func titleStyle() -> some View {
+        modifier(Title())
+    }
+
+    func watermarked(with text: String) -> some View {
+        modifier(Watermark(text: text))
+    }
+}
+
 struct ContentView: View {
     var body: some View {
         VStack(spacing: 10) {
@@ -45,7 +66,11 @@ struct ContentView: View {
             CapsuleText(text: "First")
             CapsuleText(text: "Second")
             Spacer()
-        }.padding()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding()
+        .watermarked(with: "Hacking with Swift")
+        .background(smokestreak)
     }
 }
 
