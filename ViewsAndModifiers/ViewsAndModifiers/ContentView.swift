@@ -13,12 +13,10 @@ struct ContentView: View {
     }
     let motto2 = Text("nunquam titillandus")
 
-    var spells: some View {
-        Group { // Required because calculated properties don't get @ViewBuilder from the compiler
-            Text("Alohomora")
-            Text("Petrificus Totalis")
-            Text("Wingardium Leviosa")
-        }
+    @ViewBuilder var spells: some View {
+        Text("Alohomora")
+        Text("Petrificus Totalis")
+        Text("Wingardium Leviosa")
     }
 
     var body: some View {
