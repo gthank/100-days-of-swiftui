@@ -14,7 +14,7 @@ struct ContentView: View {
     let motto2 = Text("nunquam titillandus")
 
     var spells: some View {
-        VStack { // Required because calculated properties don't get @ViewBuilder from the compiler
+        Group { // Required because calculated properties don't get @ViewBuilder from the compiler
             Text("Alohomora")
             Text("Petrificus Totalis")
             Text("Wingardium Leviosa")
