@@ -8,20 +8,35 @@
 import SwiftUI
 
 struct ContentView: View {
-    private let charcoal = Color(red: 0.4, green: 0.4, blue: 0.4)
-    private let whitesmoke = Color(red: 0.96, green: 0.96, blue: 0.96)
-    @State private var isLight = true
+    var motto1: some View {
+        Text("Draco dormiens")
+    }
+    let motto2 = Text("nunquam titillandus")
+
+    var spells: some View {
+        VStack { // Required because calculated properties don't get @ViewBuilder from the compiler
+            Text("Alohomora")
+            Text("Petrificus Totalis")
+            Text("Wingardium Leviosa")
+        }
+    }
 
     var body: some View {
         VStack {
-            Text("Gryffindor")
-                .font(.largeTitle)
-            Text("Hufflepuff")
-            Text("Ravenclaw")
-            Text("Slytherin")
+            Text("Hogwarts School Motto").font(.largeTitle)
+            VStack {
+                motto1.foregroundStyle(.red)
+                motto2.foregroundStyle(.blue)
+            }
+            .padding()
+            .font(.title)
+            Spacer()
+            VStack {
+                Text("Spells").font(.largeTitle)
+                spells
+            }
+            .padding()
         }
-        .padding()
-        .font(.title)
     }
 }
 
