@@ -7,70 +7,29 @@
 
 import SwiftUI
 
-let charcoal = Color(red: 0.4, green: 0.4, blue: 0.4)
-let smokestreak = Color(red: 0.96, green: 0.96, blue: 0.96)
-
-struct Title: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .font(.largeTitle)
-            .foregroundStyle(.white)
-            .padding()
-            .background(.blue)
-            .clipShape(.rect(cornerRadius: 10))
-    }
-}
-
-struct CapsuleText: View {
-    var text: String
-    var body: some View {
-        Text(text)
-            .font(.largeTitle)
-            .padding()
-            .foregroundStyle(.white)
-            .background(.blue)
-            .clipShape(.capsule)
-    }
-}
-
-struct Watermark: ViewModifier {
-    var text: String
-
-    func body(content: Content) -> some View {
-        ZStack(alignment: .bottomTrailing) {
-            content
-            Text(text)
-                .font(.caption)
-                .foregroundStyle(charcoal)
-                .padding(5)
-        }
-    }
-}
-
-extension View {
-    func titleStyle() -> some View {
-        modifier(Title())
-    }
-
-    func watermarked(with text: String) -> some View {
-        modifier(Watermark(text: text))
-    }
-}
 
 struct ContentView: View {
-    var body: some View {
-        VStack(spacing: 10) {
-            Spacer()
-            Text("Hello, World!").titleStyle()
-            Spacer()
-            CapsuleText(text: "First")
-            CapsuleText(text: "Second")
-            Spacer()
+    struct GridStack<Content: View> : View {
+        let rows: Int
+        let cols: Int
+        @ViewBuilder let content: (Int, Int) -> Content
+
+        var body: some View {
+            ForEach(0..<rows, id: \.self) { row in
+                HStack {
+                    ForEach(0..<cols, id: \.self) { col in
+                        content(row, col)
+                    }
+                }
+            }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding()
-        .watermarked(with: "Hacking with Swift")
-        .background(smokestreak)
+    }
+
+    var body: some View {
+        GridStack(rows: 4, cols: 4) { row, col in
+            Image(systemName: "\(row * 4 + col).circle")
+            Text("R\(row) C\(col)")
+        }
     }
 }
 
