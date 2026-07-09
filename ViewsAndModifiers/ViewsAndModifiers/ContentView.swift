@@ -14,22 +14,14 @@ struct ContentView: View {
 
     var body: some View {
         VStack {
-            Button("Hello, World!") {
-                isLight.toggle()
-                // do nothing
-            }
-            .padding()
-            .background(isLight ? whitesmoke : charcoal)
-            .foregroundColor(isLight ? charcoal : whitesmoke)
-            .font(.headline)
-            .padding()
-            .background(.red)
-            .padding()
-            .background(.white)
-            .padding()
-            .background(.blue)
+            Text("Gryffindor")
+                .font(.largeTitle)
+            Text("Hufflepuff")
+            Text("Ravenclaw")
+            Text("Slytherin")
         }
         .padding()
+        .font(.title)
     }
 }
 
