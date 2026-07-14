@@ -7,6 +7,12 @@
 
 import SwiftUI
 
+enum Result {
+    case computerWin
+    case humanWin
+    case tie
+}
+
 enum ValidMove : String, CaseIterable {
     case rock
     case paper
@@ -43,11 +49,67 @@ func toDict<T, K: Hashable, V>(
 struct ContentView: View {
     @State private var currentComputerMove = ValidMove.randomMove()
     @State private var doesPlayerWantToWin = true
+    @State private var score = 0
 
     private var computerMoveIcon: some View {
         Image(systemName: currentComputerMove.iconName())
             .imageScale(.large)
             .foregroundStyle(.tint)
+    }
+
+    func judgeMove(computerMove: ValidMove, humanMove: ValidMove) -> Result {
+        return switch (computerMove, humanMove) {
+        case (.rock, .rock):
+            .tie
+        case (.rock, .paper):
+            .humanWin
+        case (.rock, .scissors):
+            .computerWin
+        case (.paper, .rock):
+            .computerWin
+        case (.paper, .paper):
+            .tie
+        case (.paper, .scissors):
+            .humanWin
+        case (.scissors, .rock):
+            .humanWin
+        case (.scissors, .paper):
+            .computerWin
+        case (.scissors, .scissors):
+            .tie
+        }
+    }
+
+    func updateScore(result: Result) {
+        switch result {
+        case .tie:
+            // no-op
+            print("Nothing to see here. Move along!")
+        case .computerWin:
+            if doesPlayerWantToWin {
+                score -= 1
+            } else {
+                score += 1
+            }
+        case .humanWin:
+            if doesPlayerWantToWin {
+                score += 1
+            } else {
+                score -= 1
+            }
+        }
+    }
+
+    func nextMove() {
+        currentComputerMove = ValidMove.randomMove()
+        doesPlayerWantToWin = Bool.random()
+    }
+
+    func handlePlayerMove(_ humanMove: ValidMove) {
+        print("Hallo hallo hallo! \(humanMove)")
+        let result = judgeMove(computerMove: currentComputerMove, humanMove: humanMove)
+        updateScore(result: result)
+        nextMove()
     }
 
     var body: some View {
@@ -60,16 +122,20 @@ struct ContentView: View {
             HStack {
                 ForEach(ValidMove.allCases, id: \.self) { move in
                     Button {
-                        // TODO: Implement the actual play loop
+                        handlePlayerMove(move)
                     } label: {
                         VStack {
-                            Text(Image(systemName: move.iconName()))
+                            Image(systemName: move.iconName()).imageScale(.large)
                             Text(move.rawValue.capitalized)
                         }.padding()
                     }
                 }
             }
             Spacer()
+            HStack {
+                Text("Score").font(.headline)
+                Text("\(score)")
+            }
         }
         .padding()
     }
