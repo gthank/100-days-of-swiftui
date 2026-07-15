@@ -24,7 +24,11 @@ extension Calendar {
 struct ContentView: View {
     @State private var sleepAmount = 8.0
 
-    @State private var wakeUpNow = Calendar.current.tomorrowAt7AM
+    @State private var wakeupTime = Calendar.current.tomorrowAt7AM
+
+    private var bedtime: Date {
+        return Calendar.current.date(byAdding: DateComponents(hour:-8), to: wakeupTime)!
+    }
 
     var body: some View {
         VStack {
@@ -37,10 +41,14 @@ struct ContentView: View {
             )
             DatePicker(
                 "Please choose a date",
-                selection: $wakeUpNow,
+                selection: $wakeupTime,
                 in: Date.now...,
                 displayedComponents: .hourAndMinute,
             ).labelsHidden()
+            HStack {
+                Text("Wake up at")
+                Text(wakeupTime, format: .dateTime.hour().minute())
+            }.padding()
             Spacer()
         }
         .padding()
