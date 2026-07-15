@@ -35,7 +35,7 @@ struct ContentView: View {
                 in: 4...12,
                 step: 0.25,
             )
-            DatePicker("Please choose a date", selection: $wakeUpNow)
+            DatePicker("Please choose a date", selection: $wakeUpNow).labelsHidden()
             Spacer()
         }
         .padding()
