@@ -5,6 +5,7 @@
 //  Created by Hank Gay on 7/15/26.
 //
 
+import CoreML
 import SwiftUI
 
 extension Calendar {
@@ -26,8 +27,34 @@ struct ContentView: View {
     @State private var wakeupTime = Calendar.current.tomorrowAt7AM
     @State private var coffeeCounter = 1
 
+    @State private var alertTitle = ""
+    @State private var alertMessage = ""
+    @State private var isShowingAlert = false
+
     func calculateBedtime() {
-        // no-op for now
+        do {
+            let config = MLModelConfiguration()
+            let model = try SleepCalculator(configuration: config)
+            let dateComponents = Calendar.current.dateComponents(
+                [.hour, .minute],
+                from: wakeupTime,
+            )
+            let hour = dateComponents.hour ?? 0
+            let minutes = dateComponents.minute ?? 0
+            let wake = Double(hour * 60 * 60 + minutes * 60)
+            let prediction = try model.prediction(
+                wake: wake,
+                estimatedSleep: sleepAmount,
+                coffee: Double(coffeeCounter),
+            )
+            let sleepTime = wakeupTime - prediction.actualSleep
+            alertTitle = "Your ideal bedtime is…"
+            alertMessage = "\(sleepTime.formatted(date: .omitted, time: .shortened))"
+        } catch {
+            alertTitle = "Well 💩"
+            alertMessage = "Sorry, there was a problem calculating your bedtime."
+        }
+        isShowingAlert = true
     }
 
     var body: some View {
@@ -57,6 +84,10 @@ struct ContentView: View {
             }.navigationTitle("BetterRest")
             .toolbar {
                 Button("Calculate", action: calculateBedtime)
+            }.alert(alertTitle, isPresented: $isShowingAlert) {
+                Button("OK") { } // The empty trailing closure ALWAYS throws me, for whatever reason.
+            } message: {
+                Text(alertMessage)
             }
         }
     }
