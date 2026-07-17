@@ -23,35 +23,42 @@ extension Calendar {
 
 struct ContentView: View {
     @State private var sleepAmount = 8.0
-
     @State private var wakeupTime = Calendar.current.tomorrowAt7AM
+    @State private var coffeeCounter = 1
 
-    private var bedtime: Date {
-        return Calendar.current.date(byAdding: DateComponents(hour:-8), to: wakeupTime)!
+    func calculateBedtime() {
+        // no-op for now
     }
 
     var body: some View {
-        VStack {
-            Text("BetterRest").font(.largeTitle)
-            Stepper(
-                "Sleep \(sleepAmount.formatted()) hours",
-                value: $sleepAmount,
-                in: 4...12,
-                step: 0.25,
-            )
-            DatePicker(
-                "Please choose a date",
-                selection: $wakeupTime,
-                in: Date.now...,
-                displayedComponents: .hourAndMinute,
-            ).labelsHidden()
-            HStack {
-                Text("Wake up at")
-                Text(wakeupTime, format: .dateTime.hour().minute())
-            }.padding()
-            Spacer()
+        NavigationStack {
+            VStack {
+                Text("When do you want to wake up?").font(.headline)
+                DatePicker(
+                    "Please enter a time",
+                    selection: $wakeupTime,
+                    in: Date.now...,
+                    displayedComponents: .hourAndMinute,
+                ).labelsHidden()
+                Text("Desired amount of sleep").font(.headline)
+                Stepper(
+                    "\(sleepAmount.formatted()) hours",
+                    value: $sleepAmount,
+                    in: 4...12,
+                    step: 0.25,
+                )
+                Text("How many cups a day?").font(.headline)
+                Stepper(
+                    "\(coffeeCounter) cups",
+                    value: $coffeeCounter,
+                    in: 0...20,
+                    step: 1,
+                )
+            }.navigationTitle("BetterRest")
+            .toolbar {
+                Button("Calculate", action: calculateBedtime)
+            }
         }
-        .padding()
     }
 }
 
