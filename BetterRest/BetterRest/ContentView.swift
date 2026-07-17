@@ -59,28 +59,34 @@ struct ContentView: View {
 
     var body: some View {
         NavigationStack {
-            VStack {
-                Text("When do you want to wake up?").font(.headline)
-                DatePicker(
-                    "Please enter a time",
-                    selection: $wakeupTime,
-                    in: Date.now...,
-                    displayedComponents: .hourAndMinute,
-                ).labelsHidden()
-                Text("Desired amount of sleep").font(.headline)
-                Stepper(
-                    "\(sleepAmount.formatted()) hours",
-                    value: $sleepAmount,
-                    in: 4...12,
-                    step: 0.25,
-                )
-                Text("How many cups a day?").font(.headline)
-                Stepper(
-                    "\(coffeeCounter) cups",
-                    value: $coffeeCounter,
-                    in: 0...20,
-                    step: 1,
-                )
+            Form {
+                VStack {
+                    Text("When do you want to wake up?").font(.headline)
+                    DatePicker(
+                        "Please enter a time",
+                        selection: $wakeupTime,
+                        in: Date.now...,
+                        displayedComponents: .hourAndMinute,
+                    ).labelsHidden()
+                }
+                VStack {
+                    Text("Desired amount of sleep").font(.headline)
+                    Stepper(
+                        "\(sleepAmount.formatted()) hours",
+                        value: $sleepAmount,
+                        in: 4...12,
+                        step: 0.25,
+                    )
+                }
+                VStack {
+                    Text("How many cups a day?").font(.headline)
+                    Stepper(
+                        "^[\(coffeeCounter) cup](inflect: true)",
+                        value: $coffeeCounter,
+                        in: 0...20,
+                        step: 1,
+                    )
+                }
             }.navigationTitle("BetterRest")
             .toolbar {
                 Button("Calculate", action: calculateBedtime)
