@@ -77,17 +77,12 @@ struct ContentView: View {
                     )
                 }
                 Section("How many cups a day?") {
-                    Picker("Cups", selection: $coffeeCounter) {
-                        ForEach(0...20, id: \.self) { numCups in
-                            Text("^[\(numCups) cup](inflect: true)")
-                        }
-                    }.labelsHidden()
-//                    Stepper(
-//                        "^[\(coffeeCounter) cup](inflect: true)",
-//                        value: $coffeeCounter,
-//                        in: 0...20,
-//                        step: 1,
-//                    )
+                    Stepper(
+                        "^[\(coffeeCounter) cup](inflect: true)",
+                        value: $coffeeCounter,
+                        in: 0...20,
+                        step: 1,
+                    )
                 }
             }.navigationTitle("BetterRest")
             .toolbar {
