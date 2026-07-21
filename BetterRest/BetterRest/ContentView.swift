@@ -31,7 +31,8 @@ struct ContentView: View {
     @State private var alertMessage = ""
     @State private var isShowingAlert = false
 
-    func calculateBedtime() {
+    private var optimalBedtimeLabel: String {
+        let sleepTime: Date
         do {
             let config = MLModelConfiguration()
             let model = try SleepCalculator(configuration: config)
@@ -47,14 +48,11 @@ struct ContentView: View {
                 estimatedSleep: sleepAmount,
                 coffee: Double(coffeeCounter),
             )
-            let sleepTime = wakeupTime - prediction.actualSleep
-            alertTitle = "Your ideal bedtime is…"
-            alertMessage = "\(sleepTime.formatted(date: .omitted, time: .shortened))"
+            sleepTime = wakeupTime - prediction.actualSleep
         } catch {
-            alertTitle = "Well 💩"
-            alertMessage = "Sorry, there was a problem calculating your bedtime."
+            sleepTime = Calendar.current.date(byAdding: .hour, value: -8, to: wakeupTime) ?? Date()
         }
-        isShowingAlert = true
+        return sleepTime.formatted(date: .omitted, time: .shortened)
     }
 
     var body: some View {
@@ -84,14 +82,10 @@ struct ContentView: View {
                         step: 1,
                     )
                 }
+                Section("Optimal Bedtime") {
+                    Text("\(optimalBedtimeLabel)").font(.largeTitle)
+                }.headerProminence(.increased)
             }.navigationTitle("BetterRest")
-            .toolbar {
-                Button("Calculate", action: calculateBedtime)
-            }.alert(alertTitle, isPresented: $isShowingAlert) {
-                Button("OK") { } // The empty trailing closure ALWAYS throws me, for whatever reason.
-            } message: {
-                Text(alertMessage)
-            }
         }
     }
 }
