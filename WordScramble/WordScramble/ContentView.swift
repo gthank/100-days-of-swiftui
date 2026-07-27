@@ -12,6 +12,8 @@ struct ContentView: View {
     @State private var root = "miccheck"
     @State private var newWord = ""
 
+    @FocusState private var isInputFocused: Bool
+
     @State private var errTitle = ""
     @State private var errMsg = ""
     @State private var isErrorShowing = false
@@ -22,6 +24,9 @@ struct ContentView: View {
                 let allWords = startWords.components(separatedBy: "\n")
 
                 root = allWords.randomElement() ?? "silkworm"
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    isInputFocused = true
+                }
                 return
             }
         }
@@ -41,6 +46,7 @@ struct ContentView: View {
                 Section {
                     TextField("Enter your word", text: $newWord)
                         .textInputAutocapitalization(.never)
+                        .focused($isInputFocused)
                 }
 
                 Section {
@@ -127,6 +133,7 @@ struct ContentView: View {
             words.insert(answer, at: 0)
         }
         newWord = ""
+        isInputFocused = true
     }
 }
 
