@@ -15,8 +15,17 @@ struct ContentView: View {
     @State private var scoreTitle = ""
     @State private var score = 0
     @State private var numQuestionsSoFar = 0
+    @State private var flagRotationAmounts = [0.0, 0.0, 0.0]
+    @State private var flagOpacities = [1.0, 1.0, 1.0]
+    @State private var flagScales = [1.0, 1.0, 1.0]
 
     func askQuestion() {
+        withAnimation(.linear(duration: 1)) {
+            for index in flagOpacities.indices {
+                flagOpacities[index] = 1.0
+                flagScales[index] = 1.0
+            }
+        }
         countries.shuffle()
         correctAnswer = Int.random(in: 0...2)
     }
@@ -28,15 +37,29 @@ struct ContentView: View {
     }
 
     func flagTapped(_ number: Int) {
-        numQuestionsSoFar += 1
-        if number == correctAnswer {
-            scoreTitle = "Correct-a-mundo, buuuuu-ddy!"
-            score += 200
-        } else {
-            scoreTitle = "BZZZT! Wrong! That's the flag of \(countries[number])"
-            score -= 100
+        withAnimation(.linear(duration: 1)) {
+            for index in flagOpacities.indices {
+                if index != number {
+                    flagOpacities[index] = 0.25
+                    flagScales[index] = 0.5
+                } else {
+                    flagScales[index] = 1.25
+                }
+            }
         }
-        showingScore = true
+
+        withAnimation(.linear(duration: 1)) {
+            flagRotationAmounts[number] += 360.0
+            numQuestionsSoFar += 1
+            if number == correctAnswer {
+                scoreTitle = "Correct-a-mundo, buuuuu-ddy!"
+                score += 200
+            } else {
+                scoreTitle = "BZZZT! Wrong! That's the flag of \(countries[number])"
+                score -= 100
+            }
+            showingScore = true
+        }
     }
 
     var body: some View {
@@ -60,7 +83,15 @@ struct ContentView: View {
                         Button {
                             flagTapped(number)
                         } label: {
-                            Image(countries[number].lowercased()).clipShape(.capsule).shadow(radius: 5)
+                            Image(countries[number].lowercased())
+                                .clipShape(.capsule)
+                                .shadow(radius: 5)
+                                .opacity(flagOpacities[number])
+                                .rotation3DEffect(
+                                    .degrees(flagRotationAmounts[number]),
+                                    axis: (x: 0, y: 1, z: 0),
+                                )
+                                .scaleEffect(flagScales[number], anchor: .center)
                         }
                     }
                 }
