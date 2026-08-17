@@ -13,6 +13,7 @@ struct ContentView: View {
     @State private var numQuestionsToAsk = 5
     @State private var isInSetupMode = true
     @State private var multiplicand = Int.random(in: validMultiplicands)
+    @State private var path = [Int]()
 
     var body: some View {
         NavigationStack {
@@ -32,6 +33,7 @@ struct ContentView: View {
                     PracticeScreen(
                         multiplicand: multiplicand,
                         numQuestions: numQuestionsToAsk,
+                        path: $path,
                     )
                 }
                 .buttonStyle(.borderedProminent)
@@ -61,10 +63,15 @@ struct PracticeScreen: View {
     @State private var currentQandA: QandA?
     @State private var isShowingResult = false
     @State private var wasUserRight = false
+    @Binding private var path: [Int]
 
-    init(multiplicand: Int, numQuestions: Int) {
+    // Environment property to handle popping the navigation view
+    @Environment(\.dismiss) private var dismiss
+
+    init(multiplicand: Int, numQuestions: Int, path: Binding<[Int]>) {
         self.multiplicand = multiplicand
         self.numQuestions = numQuestions
+        self._path = path
     }
 
     func setupGame() {
@@ -82,7 +89,11 @@ struct PracticeScreen: View {
 
     func askQuestion() {
         // Pop question from front of queue.
-        guard !questionsAndAnswers.isEmpty else { return }
+        guard !questionsAndAnswers.isEmpty else {
+            path.removeAll()
+            dismiss()
+            return
+        }
         currentQandA = questionsAndAnswers.removeFirst()
         userAnswer = nil
     }
