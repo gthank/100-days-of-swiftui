@@ -103,7 +103,6 @@ struct PracticeScreen: View {
     var body: some View {
         Form {
             Text("We Talkin' 'bout Practice!")
-                .font(.headline)
                 .font(.largeTitle.bold())
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding()
