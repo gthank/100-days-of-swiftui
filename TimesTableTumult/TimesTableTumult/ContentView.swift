@@ -63,6 +63,7 @@ struct PracticeScreen: View {
     @State private var currentQandA: QandA?
     @State private var isShowingResult = false
     @State private var wasUserRight = false
+    @State private var isShowingGameOver = false
     @Binding private var path: [Int]
 
     // Environment property to handle popping the navigation view
@@ -90,8 +91,7 @@ struct PracticeScreen: View {
     func askQuestion() {
         // Pop question from front of queue.
         guard !questionsAndAnswers.isEmpty else {
-            path.removeAll()
-            dismiss()
+            isShowingGameOver = true
             return
         }
         currentQandA = questionsAndAnswers.removeFirst()
@@ -151,6 +151,19 @@ struct PracticeScreen: View {
                         } else {
                             Text("You'll get it next time!")
                         }
+                    }
+                )
+                .alert(
+                    "Way to Go!",
+                    isPresented: $isShowingGameOver,
+                    actions: {
+                        Button("OK") {
+                            path.removeAll()
+                            dismiss()
+                        }
+                    },
+                    message: {
+                        Text("Thanks for playing")
                     }
                 )
             } else {
