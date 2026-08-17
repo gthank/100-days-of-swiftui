@@ -123,6 +123,7 @@ struct PracticeScreen: View {
                     Button("Submit") {
                         handleAnswer()
                     }
+                    .keyboardShortcut(.defaultAction)
                     .disabled(userAnswer == nil)
                 }
             } else {
