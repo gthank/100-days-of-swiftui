@@ -100,6 +100,7 @@ struct PracticeScreen: View {
                 // Now put the question at the end of the queue so they keep seeing it until they get it right.
                 questionsAndAnswers.append(current)
             }
+
             askQuestion()
         }
     }
@@ -147,12 +148,6 @@ struct PracticeScreen: View {
         }
         .navigationTitle("Practicing Our \(multiplicand)s")
         .onAppear(perform: setupGame)
-    }
-}
-
-struct SettingsScreen: View {
-    var body: some View {
-        Text("Under Construction!")
     }
 }
 
