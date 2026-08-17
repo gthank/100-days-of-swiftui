@@ -59,6 +59,8 @@ struct PracticeScreen: View {
     @State private var questionsAndAnswers: [QandA] = []
     @State private var userAnswer: Int?
     @State private var currentQandA: QandA?
+    @State private var isShowingResult = false
+    @State private var wasUserRight = false
 
     init(multiplicand: Int, numQuestions: Int) {
         self.multiplicand = multiplicand
@@ -89,11 +91,13 @@ struct PracticeScreen: View {
         if let current = currentQandA {
             // If correct, tell the user.
             if userAnswer == current.answer {
-                // TODO: Use actual user-visible messaging.
-                print("Huzzah!")
+                wasUserRight = true
+                isShowingResult = true
             } else {
-                // TODO: Use actual user-visible messaging.
-                print("Well 💩")
+                wasUserRight = false
+                isShowingResult = true
+
+                // Now put the question at the end of the queue so they keep seeing it until they get it right.
                 questionsAndAnswers.append(current)
             }
             askQuestion()
@@ -125,6 +129,18 @@ struct PracticeScreen: View {
                     .keyboardShortcut(.defaultAction)
                     .disabled(userAnswer == nil)
                 }
+                .alert(
+                    wasUserRight ? "🥳" : "💩",
+                    isPresented: $isShowingResult,
+                    actions: {},
+                    message: {
+                        if wasUserRight {
+                            Text("Correct!")
+                        } else {
+                            Text("You'll get it next time!")
+                        }
+                    }
+                )
             } else {
                 Text("Congrats!").font(.headline)
             }
