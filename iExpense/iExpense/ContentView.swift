@@ -8,23 +8,28 @@
 import SwiftUI
 import Observation
 
-@Observable
-class User {
-    var firstName = "Bilbo"
-    var lastName = "Baggins"
-}
-
 struct ContentView: View {
-    @State private var user = User()
+    @State private var showingSecondSheet = false
 
     var body: some View {
-        VStack {
-            Text("Your name is \(user.firstName) \(user.lastName).")
-
-            TextField("First name", text: $user.firstName)
-            TextField("Last name", text: $user.lastName)
+        Button("Show Sheet") {
+            showingSecondSheet.toggle()
+        }.sheet(isPresented: $showingSecondSheet) {
+            SecondView(name: "Baggins. Bilbo Baggins.")
         }
-        .padding()
+    }
+}
+
+struct SecondView: View {
+    @Environment(\.dismiss) var dismiss
+
+    let name: String
+
+    var body: some View {
+        Text("Hello, \(name)!")
+        Button("Dismiss") {
+            dismiss()
+        }
     }
 }
 
