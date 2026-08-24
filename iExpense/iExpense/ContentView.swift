@@ -49,13 +49,19 @@ struct ContentView: View {
         NavigationStack {
             List {
                 ForEach(expenses.items) { item in
-                    Text(item.name)
+                    HStack {
+                        Text(item.name).font(.headline)
+                        Text(item.type)
+
+                        Spacer()
+                        Text(item.amount, format: .currency(code: "USD"))
+                    }
                 }.onDelete(perform: removeItems)
             }.toolbar {
                 Button("Add Expense", systemImage: "plus") {
                     isNewExpenseSheetShowing = true
                 }
-            }
+            }.padding()
         }.navigationTitle("iExpense")
         .sheet(isPresented: $isNewExpenseSheetShowing) {
             AddView(expenses: expenses)
