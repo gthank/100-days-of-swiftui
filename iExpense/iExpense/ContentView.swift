@@ -8,22 +8,37 @@
 import SwiftUI
 import Observation
 
-struct User: Codable {
-    let firstName: String
-    let lastName: String
+struct ExpenseItem {
+    let name: String
+    let type: String
+    let amount: Double
+}
+
+@Observable
+class Expenses {
+    var items = [ExpenseItem]()
 }
 
 struct ContentView: View {
-    @State private var user = User(firstName: "Taylor", lastName: "Swift")
+    @State private var expenses = Expenses()
+
+    func removeItems(at offsets: IndexSet) {
+        expenses.items.remove(atOffsets: offsets)
+    }
 
     var body: some View {
-        Button("Save user") {
-            let encoder = JSONEncoder()
-
-            if let data = try? encoder.encode(user) {
-                UserDefaults.standard.set(data, forKey: "user")
+        NavigationStack {
+            List {
+                ForEach(expenses.items, id: \.name) { item in
+                    Text(item.name)
+                }.onDelete(perform: removeItems)
+            }.toolbar {
+                Button("Add Expense", systemImage: "plus") {
+                    let expense = ExpenseItem(name: "Test", type: "Personal", amount: 42.0)
+                    expenses.items.append(expense)
+                }
             }
-        }
+        }.navigationTitle("iExpense")
     }
 }
 
