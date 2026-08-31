@@ -49,6 +49,28 @@ struct ContentView: View {
         expenses.items.remove(atOffsets: offsets)
     }
 
+    func fontColorFor(expense: ExpenseItem) -> Color {
+        switch expense.amount {
+        case 0...10:
+            .green
+        case 10...100:
+            .yellow
+        default:
+            .red
+        }
+    }
+
+    func fontWeightFor(expense: ExpenseItem) -> Font.Weight {
+        switch expense.amount {
+        case 0...10:
+            .light
+        case 10...100:
+            .medium
+        default:
+            .heavy
+        }
+    }
+
     var body: some View {
         NavigationStack {
             List {
@@ -60,6 +82,8 @@ struct ContentView: View {
                         Spacer()
                         Text(item.amount, format: .currency(code: currencyCode))
                     }
+                    .fontWeight(fontWeightFor(expense: item))
+                    .foregroundStyle(fontColorFor(expense: item))
                 }.onDelete(perform: removeItems)
             }.toolbar {
                 Button("Add Expense", systemImage: "plus") {
