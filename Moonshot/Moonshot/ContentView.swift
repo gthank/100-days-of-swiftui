@@ -7,33 +7,32 @@
 
 import SwiftUI
 
-struct CustomText: View {
-    let text: String
+struct Address: Codable {
+    let street: String
+    let city: String
+}
 
-    var body: some View {
-        Text(text)
-    }
-
-    init(_ text: String) {
-        print("Creating a _new_ CustomText: \(text)")
-        self.text = text
-    }
+struct User: Codable {
+    let name: String
+    let address: Address
 }
 
 struct ContentView: View {
     var body: some View {
-        ScrollView {
-            LazyVStack(spacing: 10) {
-                ForEach(0..<100) {
-                    CustomText("Item \($0)").font(.title)
+        Button("Decode JSON") {
+            let input = """
+                {
+                    "name": "Taylor Swift",
+                    "address": {
+                        "street": "555, Taylor Swift Avenue",
+                        "city": "Nashville"
+                    }
                 }
-            }
-        }
-        ScrollView(.horizontal) {
-            LazyHStack(spacing: 10) {
-                ForEach(0..<100) {
-                    CustomText("Item \($0)").font(.title)
-                }
+                """
+            let data = Data(input.utf8)
+            let decoder = JSONDecoder()
+            if let user = try? decoder.decode(User.self, from: data) {
+                print(user.address.street)
             }
         }
     }
