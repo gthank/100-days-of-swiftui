@@ -41,6 +41,10 @@ struct ContentView: View {
     @State private var expenses = Expenses()
     @State private var isNewExpenseSheetShowing = false
 
+    private var currencyCode: String {
+        Locale.current.currency?.identifier ?? "USD"
+    }
+
     func removeItems(at offsets: IndexSet) {
         expenses.items.remove(atOffsets: offsets)
     }
@@ -54,7 +58,7 @@ struct ContentView: View {
                         Text(item.type)
 
                         Spacer()
-                        Text(item.amount, format: .currency(code: "USD"))
+                        Text(item.amount, format: .currency(code: currencyCode))
                     }
                 }.onDelete(perform: removeItems)
             }.toolbar {
