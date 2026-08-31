@@ -8,25 +8,43 @@
 import SwiftUI
 import Observation
 
+enum ExpenseType: String, Codable, CaseIterable {
+    case personal
+    case business
+
+    var label: String {
+        switch self {
+        case .personal:
+            "Personal"
+        case .business:
+            "Business"
+        }
+    }
+}
+
 struct ExpenseItem: Codable, Identifiable {
     var id = UUID()
     let name: String
-    let type: String
+    let type: ExpenseType
     let amount: Double
 }
 
 @Observable
 class Expenses {
+    private let containsType: ExpenseType
+
     var items = [ExpenseItem]() {
         didSet {
             if let encoded = try? JSONEncoder().encode(items) {
-                UserDefaults.standard.set(encoded, forKey: "Items")
+                UserDefaults.standard.set(encoded, forKey: self.containsType.rawValue)
             }
         }
     }
 
-    init() {
-        if let savedItems = UserDefaults.standard.data(forKey: "Items") {
+    init(expenseType: ExpenseType) {
+        self.containsType = expenseType
+
+        if let savedItems = UserDefaults.standard.data(forKey: self.containsType.rawValue) {
             if let decodedItems = try? JSONDecoder().decode([ExpenseItem].self, from: savedItems) {
                 items = decodedItems
                 return
@@ -38,15 +56,20 @@ class Expenses {
 }
 
 struct ContentView: View {
-    @State private var expenses = Expenses()
+    @State private var personalExpenses = Expenses(expenseType: .personal)
+    @State private var businessExpenses = Expenses(expenseType: .business)
     @State private var isNewExpenseSheetShowing = false
 
     private var currencyCode: String {
         Locale.current.currency?.identifier ?? "USD"
     }
 
-    func removeItems(at offsets: IndexSet) {
-        expenses.items.remove(atOffsets: offsets)
+    func removePersonalExpenses(at offsets: IndexSet) {
+        personalExpenses.items.remove(atOffsets: offsets)
+    }
+
+    func removeBusinessExpenses(at offsets: IndexSet) {
+        businessExpenses.items.remove(atOffsets: offsets)
     }
 
     func fontColorFor(expense: ExpenseItem) -> Color {
@@ -74,25 +97,50 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             List {
-                ForEach(expenses.items) { item in
-                    HStack {
-                        Text(item.name).font(.headline)
-                        Text(item.type)
+                Section {
+                    Text("Personal Expenses").font(.largeTitle)
+                }
+                Section {
+                    ForEach(personalExpenses.items) { item in
+                        HStack {
+                            Text(item.name).font(.headline)
+                            Text(item.type.label)
 
-                        Spacer()
-                        Text(item.amount, format: .currency(code: currencyCode))
-                    }
-                    .fontWeight(fontWeightFor(expense: item))
-                    .foregroundStyle(fontColorFor(expense: item))
-                }.onDelete(perform: removeItems)
+                            Spacer()
+                            Text(item.amount, format: .currency(code: currencyCode))
+                        }
+                        .fontWeight(fontWeightFor(expense: item))
+                        .foregroundStyle(fontColorFor(expense: item))
+                    }.onDelete(perform: removePersonalExpenses)
+                }
+                Section {
+                    Text("Business Expenses").font(.largeTitle)
+                }
+                Section {
+                    ForEach(businessExpenses.items) { item in
+                        HStack {
+                            Text(item.name).font(.headline)
+                            Text(item.type.label)
+
+                            Spacer()
+                            Text(item.amount, format: .currency(code: currencyCode))
+                        }
+                        .fontWeight(fontWeightFor(expense: item))
+                        .foregroundStyle(fontColorFor(expense: item))
+                    }.onDelete(perform: removeBusinessExpenses)
+                }
             }.toolbar {
                 Button("Add Expense", systemImage: "plus") {
                     isNewExpenseSheetShowing = true
                 }
-            }.padding()
+            }
+            .padding()
         }.navigationTitle("iExpense")
         .sheet(isPresented: $isNewExpenseSheetShowing) {
-            AddView(expenses: expenses)
+            AddView(
+                personalExpenses: personalExpenses,
+                businessExpenses: businessExpenses,
+            )
         }
     }
 }

@@ -10,13 +10,16 @@ import SwiftUI
 struct AddView: View {
     @Environment(\.dismiss) var dismiss
 
-    let types = ["Business", "Personal"]
-
     @State private var name = ""
-    @State private var type = ""
+    @State private var type = ExpenseType.personal
     @State private var amount: Double = 0.0
 
-    var expenses: Expenses
+    var personalExpenses: Expenses
+    var businessExpenses: Expenses
+
+    private var currencyCode: String {
+        Locale.current.currency?.identifier ?? "USD"
+    }
 
     var body: some View {
         NavigationStack {
@@ -24,15 +27,15 @@ struct AddView: View {
                 TextField("Name", text: $name)
 
                 Picker("Type", selection: $type) {
-                    ForEach(types, id: \.self) {
-                        Text($0)
+                    ForEach(ExpenseType.allCases, id: \.self) {
+                        Text($0.label)
                     }
                 }
 
                 TextField(
                     "Amount",
                     value: $amount,
-                    format: .currency(code: "USD"),
+                    format: .currency(code: currencyCode),
                 ).keyboardType(.decimalPad)
             }.navigationTitle("New Expense")
                 .toolbar {
@@ -42,7 +45,12 @@ struct AddView: View {
                             type: type,
                             amount: amount,
                         )
-                        expenses.items.append(item)
+                        switch type {
+                        case .personal:
+                            personalExpenses.items.append(item)
+                        case .business:
+                            businessExpenses.items.append(item)
+                        }
                         dismiss()
                     }
                 }
@@ -51,5 +59,8 @@ struct AddView: View {
 }
 
 #Preview {
-    AddView(expenses:Expenses())
+    AddView(
+        personalExpenses:Expenses(expenseType: .personal),
+        businessExpenses: Expenses(expenseType: .business),
+    )
 }
