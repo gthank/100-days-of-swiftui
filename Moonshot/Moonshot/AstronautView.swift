@@ -1,0 +1,35 @@
+//
+//  AstronautView.swift
+//  Moonshot
+//
+//  Created by Hank Gay on 9/13/26.
+//
+
+import SwiftUI
+
+struct AstronautView: View {
+    let astronaut: Astronaut
+
+    var body: some View {
+        ScrollView {
+            VStack {
+                Image(astronaut.id)
+                    .resizable()
+                    .scaledToFit()
+
+                Text(astronaut.description)
+                    .padding()
+            }
+        }
+        .background(.darkBackground)
+        .navigationTitle(astronaut.name)
+        .foregroundStyle(.white)
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+#Preview {
+    let astronauts: [String: Astronaut] = Bundle.main.decode("astronauts.json")
+    return AstronautView(astronaut: astronauts.values.randomElement()!)
+        .preferredColorScheme(.dark)
+}
