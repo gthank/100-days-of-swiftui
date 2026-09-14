@@ -13,7 +13,7 @@ struct MissionView: View {
         let astronaut: Astronaut
 
         var isCommand: Bool {
-            "Command Pilot" == role
+            "Command Pilot" == role || "Commander" == role
         }
     }
 
@@ -70,7 +70,7 @@ struct MissionView: View {
                     HStack {
                         ForEach(crew, id: \.role) { crewMember in
                             NavigationLink {
-                                Text("Astronaut Details")
+                                AstronautView(astronaut: crewMember.astronaut)
                             } label: {
                                 HStack {
                                     Image(crewMember.astronaut.id)
