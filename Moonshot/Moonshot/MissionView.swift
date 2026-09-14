@@ -11,6 +11,10 @@ struct MissionView: View {
     struct CrewMember {
         let role: String
         let astronaut: Astronaut
+
+        var isCommand: Bool {
+            "Command Pilot" == role
+        }
     }
 
     let mission: Mission
@@ -39,12 +43,26 @@ struct MissionView: View {
                     }
                     .padding(.top)
 
+                Rectangle()
+                    .frame(height: 2)
+                    .foregroundStyle(.lightBackground)
+                    .padding(.vertical)
+
                 VStack(alignment: .leading) {
                     Text("Mission Highlights")
                         .font(.title.bold())
                         .padding(.bottom, 5)
 
                     Text(mission.description)
+
+                    Rectangle()
+                        .frame(height: 2)
+                        .foregroundStyle(.lightBackground)
+                        .padding(.vertical)
+
+                    Text("Crew")
+                        .font(.title.bold())
+                        .padding(.bottom, 5)
                 }
                 .padding(.horizontal)
 
@@ -73,7 +91,8 @@ struct MissionView: View {
                                             .foregroundStyle(.white.opacity( 0.5))
                                     }
                                 }
-                                .padding(.horizontal)
+                                .padding()
+                                .border(.lightBackground, width: crewMember.isCommand ? 2 : 0)
                             }
                         }
                     }
