@@ -43,6 +43,13 @@ struct MissionView: View {
                     }
                     .padding(.top)
 
+                HStack {
+                    Text("Launch Date:")
+                        .font(.callout.bold())
+                    Text(mission.formattedLaunchDate)
+                        .font(.callout.bold())
+                }
+
                 Rectangle()
                     .frame(height: 2)
                     .foregroundStyle(.lightBackground)
